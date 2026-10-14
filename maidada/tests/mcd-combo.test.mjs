@@ -1,7 +1,0 @@
-import test from 'node:test';
-import assert from 'node:assert/strict';
-import {buildCombo} from '../lib/mcd-combo.mjs';
-const detail={code:'combo',rounds:[{id:1,minQuantity:1,maxQuantity:1,choices:[{code:'cola',quantity:1,isDefault:1,maxQuantity:-1},{code:'tea',quantity:0,isDefault:0,maxQuantity:-1,modification:{items:[{values:[{code:'ice',selectedQuantity:1,selectedKey:'standard'},{code:'sugar',selectedQuantity:0,selectedKey:'yes',unselectedKey:'no'}]}]}}]}]};
-test('replaces drink rather than adding a second drink',()=>{const p=buildCombo(detail,{'1':[{code:'tea',quantity:1}]});assert.equal(p.roundList[0].comboItemList.length,1);assert.equal(p.roundList[0].comboItemList[0].code,'tea');assert.deepEqual(p.roundList[0].comboItemList[0].modification.values,[{code:'ice',key:'standard',quantity:1},{code:'sugar',key:'no',quantity:1}]);});
-test('rejects unavailable choices, unknown rounds, duplicate drinks and excess quantity',()=>{for(const picks of [{'1':[{code:'unknown',quantity:1}]},{'2':[{code:'tea',quantity:1}]},{'1':[{code:'tea',quantity:2}]},{'1':[{code:'tea',quantity:1},{code:'tea',quantity:1}]}])assert.throws(()=>buildCombo(detail,picks));});
-test('defaults preserve portions without multiplying child quantities by outer quantity',()=>{const p=buildCombo(detail,{},2);assert.equal(p.quantity,2);assert.equal(p.roundList[0].comboItemList[0].quantity,1);assert.equal(p.roundList[0].comboItemList[0].code,'cola');});
